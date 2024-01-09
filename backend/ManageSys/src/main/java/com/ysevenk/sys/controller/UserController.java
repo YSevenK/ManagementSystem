@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ysevenk.common.vo.Result;
 import com.ysevenk.sys.entity.User;
 import com.ysevenk.sys.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -22,6 +24,7 @@ import java.util.Map;
  * @author ysevenk
  * @since 2024-01-08
  */
+@Api(tags = {"用户接口列表"})
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -37,6 +40,7 @@ public class UserController {
         return Result.success(list, "查询成功");
     }
 
+    @ApiOperation("用户登录")
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody User user) {
         Map<String, Object> data = userService.login(user);
@@ -85,26 +89,26 @@ public class UserController {
     @PostMapping
     public Result<?> addUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user);
+        userService.addUser(user);
         return Result.success("新增用户成功");
     }
 
     @PutMapping
     public Result<?> updateUser(@RequestBody User user) {
         user.setPassword(null);
-        userService.updateById(user);
+        userService.updateUser(user);
         return Result.success("修改用户成功");
     }
 
     @GetMapping("/{id}")
     public Result<User> getUserById(@PathVariable("id") Integer id) {
-        User user = userService.getById(id);
+        User user = userService.getUserById(id);
         return Result.success(user);
     }
 
     @DeleteMapping("/{id}")
     public Result<User> deleteUserById(@PathVariable("id") Integer id) {
-        userService.removeById(id);
+        userService.deleteUserById(id);
         return Result.success("删除用户成功");
     }
 }
